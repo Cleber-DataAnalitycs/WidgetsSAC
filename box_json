@@ -34,4 +34,56 @@
     },
     "info": {
       "type": "string",
-      "description
+      "description": "Label or description",
+      "default": ""
+    },
+    "color": {
+      "type": "string",
+      "description": "Gauge color (hex or CSS name)",
+      "default": "#3498db"
+    },
+    "width": {
+      "type": "integer",
+      "description": "Widget width in pixels",
+      "default": 100
+    },
+    "height": {
+      "type": "integer",
+      "description": "Widget height in pixels",
+      "default": 100
+    }
+  },
+  "methods": {
+    "setValue": {
+      "description": "Sets the gauge value, label, and color",
+      "parameters": [
+        {
+          "name": "newValue",
+          "type": "number",
+          "description": "Gauge value (0–100)"
+        },
+        {
+          "name": "newInfo",
+          "type": "string",
+          "description": "Label or description"
+        },
+        {
+          "name": "newColor",
+          "type": "string",
+          "description": "Gauge color"
+        }
+      ],
+      "body": "this.value = newValue; this.info = newInfo; this.color = newColor;"
+    },
+    "getValue": {
+      "returnType": "number",
+      "description": "Returns the current gauge value",
+      "body": "return this.value;"
+    }
+  },
+  "events": {
+    "onClick": {
+      "description": "Triggered when the user clicks the gauge"
+    }
+  }
+}
