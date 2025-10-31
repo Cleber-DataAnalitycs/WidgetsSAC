@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Teste do Gauge Widget</title>
-  <script type="module" src="box.js"></script>
+  <script type="module" src="./box.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -23,10 +23,10 @@
 
   <script>
     const gauge = document.getElementById("gauge");
-    gauge.onCustomWidgetAfterUpdate({
-      value: 75,
-      info: "Desempenho",
-      color: "#e67e22"
+
+    // Aguarda o componente carregar
+    customElements.whenDefined("com-demo-gauge").then(() => {
+      gauge.render(75, "Desempenho", "#e67e22");
     });
   </script>
 </body>
