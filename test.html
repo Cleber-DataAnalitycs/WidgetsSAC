@@ -29,12 +29,20 @@
   <com-demo-gauge id="gauge"></com-demo-gauge>
 
   <script>
-    // Aguarda o componente estar definido
-    customElements.whenDefined("com-demo-gauge").then(() => {
-      const gauge = document.getElementById("gauge");
-      gauge.render(75, "Desempenho", "#e67e22");
+    window.addEventListener("DOMContentLoaded", () => {
+      customElements.whenDefined("com-demo-gauge").then(() => {
+        const gauge = document.getElementById("gauge");
+
+        // Aguarda um pequeno tempo para garantir que o shadow DOM esteja pronto
+        setTimeout(() => {
+          if (typeof gauge.render === "function") {
+            gauge.render(75, "Desempenho", "#e67e22");
+          } else {
+            console.error("Método render() não está disponível no componente.");
+          }
+        }, 100);
+      });
     });
   </script>
 </body>
 </html>
-
