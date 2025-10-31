@@ -1,0 +1,37 @@
+{
+  "id": "com.demo.gauge",
+  "version": "1.0.0",
+  "name": "Demo Gauge",
+  "description": "A customizable gauge widget for SAC",
+  "newInstancePrefix": "Gauge",
+  "icon": "https://example.demo/box/icon.png",
+  "vendor": "Cleber Dev",
+  "license": "MIT",
+  "eula": "https://example.demo/eula",
+  "categories": ["KPI", "Gauge", "Visualization"],
+  "tags": ["performance", "indicator", "custom", "widget", "SAC"],
+  "webcomponents": [
+    {
+      "kind": "main",
+      "tag": "com-demo-gauge",
+      "url": "https://example.demo/box/box.js",
+      "integrity": "",
+      "ignoreIntegrity": true
+    },
+    {
+      "kind": "styling",
+      "tag": "com-demo-gauge-sps",
+      "url": "https://example.demo/box/box_sps.js",
+      "integrity": "",
+      "ignoreIntegrity": true
+    }
+  ],
+  "properties": {
+    "value": {
+      "type": "number",
+      "description": "Gauge value (0–100)",
+      "default": 0
+    },
+    "info": {
+      "type": "string",
+      "description
