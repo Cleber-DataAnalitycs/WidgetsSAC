@@ -1,0 +1,116 @@
+(function () {
+    let template = document.createElement("template");
+    template.innerHTML = `
+        <style>
+            :host {
+                border-radius: 10px;
+                border-width: 2px;
+                border-color: black;
+                border-style: solid;
+                display: block;
+                --gauge-color: #27ae60;
+            }
+
+            .metric {
+                padding: 10%;
+            }
+
+            .metric svg {
+                max-width: 100%;
+            }
+
+            .metric path {
+                stroke-width: 75;
+                stroke: #ecf0f1;
+                fill: none;
+            }
+
+            .metric text {
+                font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            }
+
+            .metric.participation path.data-arc {
+                stroke: var(--gauge-color);
+            }
+
+            .metric.participation text {
+                fill: var(--gauge-color);
+            }
+        </style>
+
+        <div class="metric participation" role="img" aria-label="Gauge chart">
+            <svg viewBox="0 0 1000 500">
+                <path d="M 950 500 A 450 450 0 0 0 50 500"></path>
+                <text class="percentage" text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="14em" font-weight="bold">0%</text>
+                <text class="title" text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="9em" font-weight="normal"></text>
+            </svg>
+        </div>
+    `;
+
+    class Box extends HTMLElement {
+        constructor() {
+            super();
+            let shadowRoot = this.attachShadow({ mode: "open" });
+            shadowRoot.appendChild(template.content.cloneNode(true));
+
+            this.$svg = shadowRoot.querySelector("svg");
+            this.$percentage = shadowRoot.querySelector(".percentage");
+            this.$title = shadowRoot.querySelector(".title");
+
+            this.addEventListener("click", () => {
+                this.dispatchEvent(new Event("onClick"));
+            });
+
+            this._props = {};
+        }
+
+        render(val, info, color) {
+            if (typeof val !== "number" || val < 0 || val > 100) return;
+
+            const valRatio = val / 100;
+            const arcPath = this.svg_circle_arc_path(500, 500, 450, -90, valRatio * 180 - 90);
+            const rounded = Math.round(val * 10) / 10;
+
+            this.style.setProperty("--gauge-color", color || "#27ae60");
+            this.$percentage.textContent = `${rounded}%`;
+            this.$title.textContent = info || "";
+
+            const arc = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            arc.setAttribute("d", arcPath);
+            arc.setAttribute("class", "data-arc");
+
+            // Remove old arc if exists
+            const oldArc = this.$svg.querySelector(".data-arc");
+            if (oldArc) this.$svg.removeChild(oldArc);
+
+            this.$svg.appendChild(arc);
+        }
+
+        polar_to_cartesian(cx, cy, radius, angle) {
+            const radians = (angle - 90) * Math.PI / 180.0;
+            return [
+                Math.round((cx + radius * Math.cos(radians)) * 100) / 100,
+                Math.round((cy + radius * Math.sin(radians)) * 100) / 100,
+            ];
+        }
+
+        svg_circle_arc_path(x, y, radius, start_angle, end_angle) {
+            const start = this.polar_to_cartesian(x, y, radius, end_angle);
+            const end = this.polar_to_cartesian(x, y, radius, start_angle);
+            return `M ${start[0]} ${start[1]} A ${radius} ${radius} 0 0 0 ${end[0]} ${end[1]}`;
+        }
+
+        onCustomWidgetBeforeUpdate(changedProperties) {
+            this._props = { ...this._props, ...changedProperties };
+        }
+
+        onCustomWidgetAfterUpdate(changedProperties) {
+            this.$value = changedProperties["value"];
+            this.$info = changedProperties["info"];
+            this.$color = changedProperties["color"];
+            this.render(this.$value, this.$info, this.$color);
+    }
+    }
+
+    customElements.define("com-demo-gauge", Box);
+})();
