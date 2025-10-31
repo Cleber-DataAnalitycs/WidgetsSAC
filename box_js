@@ -9,38 +9,39 @@
                 border-style: solid;
                 display: block;
                 --gauge-color: #27ae60;
-            }
+         }
 
-            .metric {
-                padding: 10%;
-            }
+         .metric {
+             padding: 10%;
+         }
 
-            .metric svg {
-                max-width: 100%;
-            }
+         .metric svg {
+             max-width: 100%;
+         }
 
-            .metric path {
-                stroke-width: 75;
-                stroke: #ecf0f1;
-                fill: none;
-            }
+         .metric path {
+             stroke-width: 75;
+             stroke: #ecf0f1;
+             fill: none;
+         }
 
-            .metric text {
-                font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            }
+         .metric text {
+             font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+         }
 
-            .metric.participation path.data-arc {
-                stroke: var(--gauge-color);
-            }
+         .metric.participation path.data-arc {
+             stroke: var(--gauge-color);
+         }
 
-            .metric.participation text {
-                fill: var(--gauge-color);
-            }
+         .metric.participation text {
+             fill: var(--gauge-color);
+         }
         </style>
 
         <div class="metric participation" role="img" aria-label="Gauge chart">
             <svg viewBox="0 0 1000 500">
-                <path d="M 950 500 A 450 450 0 0 0 50 500"></path>
+                <path class="base-arc" d="M 950 500 A 450 450 0 0 0 50 500"></path>
+                <path class="data-arc"></path>
                 <text class="percentage" text-anchor="middle" alignment-baseline="middle" x="500" y="300" font-size="14em" font-weight="bold">0%</text>
                 <text class="title" text-anchor="middle" alignment-baseline="middle" x="500" y="450" font-size="9em" font-weight="normal"></text>
             </svg>
@@ -56,6 +57,7 @@
             this.$svg = shadowRoot.querySelector("svg");
             this.$percentage = shadowRoot.querySelector(".percentage");
             this.$title = shadowRoot.querySelector(".title");
+            this.$arc = shadowRoot.querySelector(".data-arc");
 
             this.addEventListener("click", () => {
                 this.dispatchEvent(new Event("onClick"));
@@ -74,16 +76,7 @@
             this.style.setProperty("--gauge-color", color || "#27ae60");
             this.$percentage.textContent = `${rounded}%`;
             this.$title.textContent = info || "";
-
-            const arc = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            arc.setAttribute("d", arcPath);
-            arc.setAttribute("class", "data-arc");
-
-            // Remove old arc if exists
-            const oldArc = this.$svg.querySelector(".data-arc");
-            if (oldArc) this.$svg.removeChild(oldArc);
-
-            this.$svg.appendChild(arc);
+            this.$arc.setAttribute("d", arcPath);
         }
 
         polar_to_cartesian(cx, cy, radius, angle) {
@@ -109,7 +102,7 @@
             this.$info = changedProperties["info"];
             this.$color = changedProperties["color"];
             this.render(this.$value, this.$info, this.$color);
-    }
+        }
     }
 
     customElements.define("com-demo-gauge", Box);
